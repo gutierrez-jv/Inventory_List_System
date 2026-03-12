@@ -27,6 +27,7 @@ namespace Inventory_List_System.Controllers
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 ViewBag.Error = "Username and password are required.";
+                ViewBag.Username = username;
                 return View();
             }
 
@@ -35,18 +36,21 @@ namespace Inventory_List_System.Controllers
             if (username.Length < 3)
             {
                 ViewBag.Error = "Username must be at least 3 characters.";
+                ViewBag.Username = username;
                 return View();
             }
 
             if (password.Length < 6)
             {
                 ViewBag.Error = "Password must be at least 6 characters.";
+                ViewBag.Username = username;
                 return View();
             }
 
             if (_userRepository.UsernameExists(username))
             {
                 ViewBag.Error = "Username already exists.";
+                ViewBag.Username = username;
                 return View();
             }
 
@@ -72,6 +76,7 @@ namespace Inventory_List_System.Controllers
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 ViewBag.Error = "Username and password are required.";
+                ViewBag.Username = username;
                 return View();
             }
 
@@ -82,6 +87,7 @@ namespace Inventory_List_System.Controllers
             if (user == null)
             {
                 ViewBag.Error = "Username does not exist.";
+                ViewBag.Username = username;
                 return View();
             }
 
@@ -90,6 +96,7 @@ namespace Inventory_List_System.Controllers
             if (!isPasswordValid)
             {
                 ViewBag.Error = "Password is incorrect.";
+                ViewBag.Username = username;
                 return View();
             }
 
