@@ -18,11 +18,9 @@ namespace Inventory_List_System.Respositories
             _context.SaveChanges();
         }
 
-        public User GetByUsername(string username)
+        public User? GetByUsername(string username)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user == null) throw new Exception("User not found");
-            return user;
+            return _context.Users.FirstOrDefault(u => u.Username == username);
         }
 
         public bool UsernameExists(string username)
