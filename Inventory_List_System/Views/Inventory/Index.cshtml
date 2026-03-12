@@ -4,72 +4,138 @@
     ViewData["Title"] = "Inventory";
 }
 
-<h2>Inventory List</h2>
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div>
+        <h2 class="page-title mb-1">Inventory List</h2>
+        <p class="section-subtitle mb-0">Track, add, and remove your items quickly.</p>
+    </div>
+
+    <button class="btn bobcats-btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+        + Add Item
+    </button>
+</div>
 
 <form method="get" class="mb-3">
-    <input name="search" value="@ViewBag.Search" class="form-control" placeholder="Search item" />
+    <div class="input-group">
+        <span class="input-group-text">Search</span>
+        <input name="search" value="@ViewBag.Search" class="form-control" placeholder="Type item name" />
+        <button class="btn btn-outline-secondary" type="submit">Go</button>
+    </div>
 </form>
 
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
-    Add Item
-</button>
+<div class="table-responsive">
+    <table class="table bobcats-table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Date Added</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Date Added</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @if (Model != null && Model.Count > 0)
-        {
-            @foreach (var item in Model)
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.ItemName</td>
+                        <td>@item.Quantity</td>
+                        <td>₱@item.Price</td>
+                        <td>@item.DateAdded.ToString("MMM dd, yyyy hh:mm tt")</td>
+                        <td class="text-center">
+                            <button type="button"
+                                    class="btn btn-outline-primary btn-sm me-1 edit-item-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                    data-id="@item.Id"
+                                    data-name="@item.ItemName"
+                                    data-quantity="@item.Quantity"
+                                    data-price="@item.Price">
+                                Edit
+                            </button>
+                            <form method="post" asp-action="Delete" asp-route-id="@item.Id" class="d-inline">
+                                <button type="submit" class="btn bobcats-btn-danger btn-sm text-white">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@item.ItemName</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Price</td>
-                    <td>@item.DateAdded</td>
-                    <td>
-                        <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
+                    <td colspan="5" class="text-center py-4 section-subtitle">No items available.</td>
                 </tr>
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="5" class="text-center">No Items Available</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
-<div class="modal fade" id="addModal" tabindex="-1">
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-action="Update">
+                <input type="hidden" name="id" id="editItemId" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title page-title">Update Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label">Item Name</label>
+                        <input name="itemName" id="editItemName" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Quantity</label>
+                        <input name="quantity" id="editItemQuantity" type="number" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Price</label>
+                        <input name="price" id="editItemPrice" type="number" step="0.01" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn bobcats-btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <form method="post" asp-action="Create">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Item</h5>
+                    <h5 class="modal-title page-title">Add Item</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <input name="itemName" class="form-control" placeholder="Item Name" />
-                    <input name="quantity" type="number" class="form-control mt-2" placeholder="Quantity" />
-                    <input name="price" type="number" step="0.01" class="form-control mt-2" placeholder="Price" />
+                    <div class="mb-2">
+                        <label class="form-label">Item Name</label>
+                        <input name="itemName" class="form-control" placeholder="e.g., Notebook" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Quantity</label>
+                        <input name="quantity" type="number" class="form-control" placeholder="0" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Price</label>
+                        <input name="price" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                    </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn bobcats-btn-primary">Save</button>
                 </div>
             </form>
 
@@ -82,7 +148,7 @@
 }
 
 <nav>
-    <ul class="pagination">
+    <ul class="pagination justify-content-end mt-3">
         @for (int i = 1; i <= totalPages; i++)
         {
             <li class="page-item @(ViewBag.Page == i ? "active" : "")">
@@ -91,3 +157,16 @@
         }
     </ul>
 </nav>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.edit-item-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                document.getElementById('editItemId').value = button.getAttribute('data-id');
+                document.getElementById('editItemName').value = button.getAttribute('data-name');
+                document.getElementById('editItemQuantity').value = button.getAttribute('data-quantity');
+                document.getElementById('editItemPrice').value = button.getAttribute('data-price');
+            });
+        });
+    </script>
+}
