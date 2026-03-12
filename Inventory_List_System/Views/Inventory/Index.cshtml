@@ -1,0 +1,93 @@
+﻿@model List<Inventory_List_System.Models.Database.InventoryItem>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<h2>Inventory List</h2>
+
+<form method="get" class="mb-3">
+    <input name="search" value="@ViewBag.Search" class="form-control" placeholder="Search item" />
+</form>
+
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
+    Add Item
+</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Date Added</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ItemName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td>
+                    <td>@item.DateAdded</td>
+                    <td>
+                        <form method="post" asp-action="Delete" asp-route-id="@item.Id" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No Items Available</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form method="post" asp-action="Create">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input name="itemName" class="form-control" placeholder="Item Name" />
+                    <input name="quantity" type="number" class="form-control mt-2" placeholder="Quantity" />
+                    <input name="price" type="number" step="0.01" class="form-control mt-2" placeholder="Price" />
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@{
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalItems / ViewBag.PageSize);
+}
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(ViewBag.Page == i ? "active" : "")">
+                <a class="page-link" href="?page=@i&search=@ViewBag.Search">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
