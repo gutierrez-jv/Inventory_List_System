@@ -15,6 +15,7 @@ namespace Inventory_List_System.Controllers
         {
             _userRepository = userRepository;
         }
+
         public IActionResult Register()
         {
             return View();
@@ -23,6 +24,25 @@ namespace Inventory_List_System.Controllers
         [HttpPost]
         public IActionResult Register(string username, string password)
         {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ViewBag.Error = "Username and password are required.";
+                return View();
+            }
+
+            username = username.Trim();
+
+            if (username.Length < 3)
+            {
+                ViewBag.Error = "Username must be at least 3 characters.";
+                return View();
+            }
+
+            if (password.Length < 6)
+            {
+                ViewBag.Error = "Password must be at least 6 characters.";
+                return View();
+            }
 
             if (_userRepository.UsernameExists(username))
             {
@@ -37,7 +57,7 @@ namespace Inventory_List_System.Controllers
             };
 
             _userRepository.AddUser(user);
-
+            TempData["Success"] = "Registration successful. You can now log in.";
             return RedirectToAction("Login");
         }
 
@@ -49,11 +69,27 @@ namespace Inventory_List_System.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var user = _userRepository.ValidateUser(username, password);
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ViewBag.Error = "Username and password are required.";
+                return View();
+            }
+
+            username = username.Trim();
+
+            var user = _userRepository.GetByUsername(username);
 
             if (user == null)
             {
-                ViewBag.Error = "Invalid username or password.";
+                ViewBag.Error = "Username does not exist.";
+                return View();
+            }
+
+            bool isPasswordValid = SecurityHelpers.VerifyPassword(password, user.PasswordHash);
+
+            if (!isPasswordValid)
+            {
+                ViewBag.Error = "Password is incorrect.";
                 return View();
             }
 
@@ -75,17 +111,21 @@ namespace Inventory_List_System.Controllers
                 principal
             );
 
+            TempData["Success"] = "Login successful.";
             return RedirectToAction("Index", "Inventory");
         }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["Success"] = "You have been logged out.";
             return RedirectToAction("Login");
         }
 
         public IActionResult AccessDenied()
         {
-            return View();
+            TempData["Error"] = "Access denied. Please log in with the correct account.";
+            return RedirectToAction("Login");
         }
     }
 }

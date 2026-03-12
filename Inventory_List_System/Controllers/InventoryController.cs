@@ -68,5 +68,32 @@ namespace Inventory_List_System.Controllers
             _inventoryRepository.DeleteItem(id);
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult Update(int id, string itemName, int quantity, decimal price)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var item = _inventoryRepository.GetItemById(id);
+            int parsedUserId = int.Parse(userId);
+
+            if (item.UserId != parsedUserId)
+            {
+                return Forbid();
+            }
+
+            item.ItemName = itemName;
+            item.Quantity = quantity;
+            item.Price = price;
+
+            _inventoryRepository.UpdateItem(item);
+
+            return RedirectToAction("Index");
+        }
     }
 }
