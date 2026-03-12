@@ -3,11 +3,12 @@ using System.Text;
 
 namespace Inventory_List_System.Helpers
 {
+    // This is the code for the PasswordHashinh
     public class SecurityHelpers
     {
-        private static int saltSize = 16; // 128 bits
-        private const int hashSize = 32; // 256 bits
-        private const int iteration = 10000; // minimum, though higher is better
+        private static int saltSize = 16;
+        private const int hashSize = 32;
+        private const int iteration = 10000;
 
         public static string HashPassword(string password)
         {

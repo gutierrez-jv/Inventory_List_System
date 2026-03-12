@@ -2,7 +2,7 @@
 
 namespace Inventory_List_System.Respositories
 {
-    public interface IUserRepostitory
+    public interface IUserRepository
     {
         User GetByUsername(string username);
         bool UsernameExists(string username);

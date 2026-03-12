@@ -5,7 +5,7 @@ using Inventory_List_System.Helpers;
 
 namespace Inventory_List_System.Respositories
 {
-    public class UserRepository : IUserRepostitory
+    public class UserRepository : IUserRepository
     {
         private readonly InventoryDbContext _context;
         public UserRepository(InventoryDbContext context)
@@ -14,14 +14,12 @@ namespace Inventory_List_System.Respositories
         }
         public void AddUser(User user)
         {
-            // Adds users and saves the changes to the database
             _context.Users.Add(user);
             _context.SaveChanges();
         }
 
         public User GetByUsername(string username)
         {
-            // Retrieves a user by their username, throws an exception if the user is not found
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user == null) throw new Exception("User not found");
             return user;
@@ -29,7 +27,6 @@ namespace Inventory_List_System.Respositories
 
         public bool UsernameExists(string username)
         {
-            // Checks if a username exists in the database, returns true if it does, false otherwise
             if (_context.Users.Any(u => u.Username == username)) {
                 return true;
             }
