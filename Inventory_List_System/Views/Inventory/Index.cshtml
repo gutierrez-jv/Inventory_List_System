@@ -112,3 +112,16 @@
         }
     </ul>
 </nav>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.edit-item-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                document.getElementById('editItemId').value = button.getAttribute('data-id');
+                document.getElementById('editItemName').value = button.getAttribute('data-name');
+                document.getElementById('editItemQuantity').value = button.getAttribute('data-quantity');
+                document.getElementById('editItemPrice').value = button.getAttribute('data-price');
+            });
+        });
+    </script>
+}
