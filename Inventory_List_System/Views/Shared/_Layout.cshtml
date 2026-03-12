@@ -13,7 +13,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bobcats-navbar mb-4">
             <div class="container-fluid">
-                <a class="navbar-brand bobcats-brand" asp-area="" asp-controller="Home" asp-action="Index"> Inventory</a>
+                <a class="navbar-brand bobcats-brand" asp-area="" asp-controller="Home" asp-action="Index">BOB<span class="highlight">CATS</span> Inventory</a>
                 <button class="navbar-toggler border-light" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -47,6 +47,30 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["Success"]))
+            });
+        </script>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["Error"]))
+            });
+        </script>
+    }
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
