@@ -1,5 +1,7 @@
 ﻿using Inventory_List_System.Models.Database;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Permissions;
+using Inventory_List_System.Helpers;
 
 namespace Inventory_List_System.Respositories
 {
@@ -34,9 +36,15 @@ namespace Inventory_List_System.Respositories
             return false;
         }
 
-        public User ValidateUser(string username, string password)
+        public User? ValidateUser(string username, string password)
         {
-            throw new NotImplementedException();
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user == null) return null;
+
+            bool isPasswordValid = SecurityHelpers.VerifyPassword(password, user.PasswordHash);
+
+            if (!isPasswordValid) return null;
+            return user;
         }
     }
 }

@@ -7,6 +7,6 @@ namespace Inventory_List_System.Respositories
         User GetByUsername(string username);
         bool UsernameExists(string username);
         void AddUser(User user);
-        User ValidateUser(string username, string password);
+        User? ValidateUser(string username, string password);
     }
 }
